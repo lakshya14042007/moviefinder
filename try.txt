@@ -1,0 +1,112 @@
+const API_KEY = "your_api_key"; // yaha apna OMDb API key daalna
+const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
+const results = document.getElementById("results");
+
+// Search button click
+searchBtn.addEventListener("click", () => {
+  let query = searchInput.value.trim();
+  if (query) {
+    fetchMovies(query);
+  }
+});
+
+// Enter key press
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    let query = searchInput.value.trim();
+    if (query) {
+      fetchMovies(query);
+    }
+  }
+});
+
+async function fetchMovies(query) {
+  try {
+    const response = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=${API_KEY}`);
+    if (!response.ok) throw new Error("Network error!");
+
+    const data = await response.json();
+
+    if (data.Response === "True") {
+      displayMovies(data.Search);
+    } else {
+      results.innerHTML = `<p>No results found</p>`;
+    }
+  } catch (error) {
+    console.error(error);
+    results.innerHTML = `<p>Error fetching data</p>`;
+  }
+}
+
+function displayMovies(movies) {
+  results.innerHTML = "";
+  movies.forEach(movie => {
+    const movieDiv = document.createElement("div");
+    movieDiv.classList.add("movie");
+
+    movieDiv.innerHTML = `
+      <img src="${movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/200"}" alt="${movie.Title}">
+      <h3>${movie.Title}</h3>
+      <p>${movie.Year}</p>
+    `;
+    results.appendChild(movieDiv);
+  });
+}
+
+
+
+
+
+
+
+
+
+{
+  "Search": [
+    {
+      "Title": "Inception",
+      "Year": "2010",
+      "imdbID": "tt1375666",
+      "Type": "movie",
+      "Poster": "https://imageurl.jpg"
+    },
+    {
+      "Title": "Inception: The Cobol Job",
+      "Year": "2010",
+      "imdbID": "tt1790736",
+      "Type": "movie",
+      "Poster": "https://imageurl.jpg"
+    }
+  ],
+  "totalResults": "2",
+  "Response": "True"
+}
+
+
+
+
+
+{
+  "Title": "Inception",
+  "Year": "2010",
+  "Rated": "PG-13",
+  "Released": "16 Jul 2010",
+  "Runtime": "148 min",
+  "Genre": "Action, Adventure, Sci-Fi",
+  "Director": "Christopher Nolan",
+  "Actors": "Leonardo DiCaprio, Joseph Gordon-Levitt, Ellen Page",
+  "Plot": "A thief who steals corporate secrets ...",
+  "Language": "English, Japanese, French",
+  "Country": "USA, UK",
+  "Awards": "Won 4 Oscars. Another 152 wins & 220 nominations.",
+  "Poster": "https://m.media-amazon.com/images/M/....jpg",
+  "Ratings": [
+    { "Source": "Internet Movie Database", "Value": "8.8/10" },
+    { "Source": "Rotten Tomatoes", "Value": "87%" },
+    { "Source": "Metacritic", "Value": "74/100" }
+  ],
+  "imdbID": "tt1375666",
+  "Type": "movie",
+  "Response": "True"
+}
